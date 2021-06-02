@@ -88,7 +88,6 @@ contract LcatLottery is Ownable,ReentrancyGuard {
    }
     //withdraw any token send wrongly to contract
  function RescueLossToken(address _address,uint256 Amount,address Recipient) public onlyOwner{
-     require(_address!=LolcatToken,"You Cant Withdraw Lcat Token");//Prevent Contract Access To Lcat Token Withdraw
      IERC20(_address).transfer(Recipient,Amount);
  }
  function RescueBnb()public onlyOwner{
