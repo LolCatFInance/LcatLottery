@@ -10,7 +10,6 @@ contract LcatLottery is Ownable,ReentrancyGuard {
     using SafeMath for uint256;
    address payable LolcatToken;
    uint256 public RoundCount;
-   uint256 public TransferFee;
    mapping (uint256=>mapping(uint256=>address)) public Ticket;
    mapping (address=>mapping(uint256=>uint256[])) public UserTickets;
    mapping (uint256=>uint256) TicketCount;
@@ -39,9 +38,7 @@ contract LcatLottery is Ownable,ReentrancyGuard {
        LolcatToken=_TokenAddress;
        Lcat=IERC20(_TokenAddress);
    }
-   function SetTransferFee(uint256 _Fee)public onlyOwner{
-       TransferFee=_Fee;
-   }
+
    function setticketcount(uint256 lottery,uint256 Amount)internal{
        Lottery[lottery].TotalTicket=Amount;
    }
@@ -57,9 +54,9 @@ contract LcatLottery is Ownable,ReentrancyGuard {
     function ParticipateLottery(uint256 _Amount)public nonReentrant returns(uint256[] memory,uint256,uint256){
       RoundInfo memory LotteryId=Lottery[RoundCount];
       Lcat.transferFrom(msg.sender,address(this),_Amount);
-      require(_Amount.div(1000).mul(TransferFee)>=LotteryId.TicketPrice);
+      require(_Amount>=LotteryId.TicketPrice);
       require(LotteryId.Starttime<=block.timestamp&&LotteryId.EndTime>=block.timestamp,"participation time ended");
-       uint256 TotalTicketCount=(_Amount.div(1000).mul(TransferFee)).div(LotteryId.TicketPrice);
+       uint256 TotalTicketCount=(_Amount).div(LotteryId.TicketPrice);
        uint256[] memory FinalTickets = new uint256[](TotalTicketCount);
        uint256 LotteryTotalTickets=LotteryId.TotalTicket;
        for (uint i=0; i<TotalTicketCount; i++) {
